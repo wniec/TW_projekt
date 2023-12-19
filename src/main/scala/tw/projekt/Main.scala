@@ -1,14 +1,32 @@
+package tw.projekt
+
+import scala.collection.mutable
+
 private object Main{
-  @main
-  def main(): Unit = {
+  def main(args: Array[String]): Unit = {
     val filepath: String = "src\\main\\scala\\in.txt"
     val matrix = Matrix(filepath)
-    val arr = matrix.array
-    val vector = matrix.vector
-    arr.foreach((x: Array[Double]) => println(x.mkString("Array(", ", ", ")")))
-    println(vector.mkString("Array(", ", ", ")"))
-    val operations = matrix.getOperations
-    for(i <- 0 until 3)
-      println(operations(i))
+    val relations = Relations(matrix)
+    //for(i <- relations.dependent)
+      //println(i)
+      /*
+      relations.dependent.keys.foreach((o:Operation) =>{
+        print(o.toString)
+        print("\t\t")
+        relations.dependent(o).foreach((o1:Operation) => print(o1.toString," "))
+        println("")
+      })
+      */
+    val foataForm = FoataForm(relations)
+    //println("\n\n\n")
+    /*
+    foataForm.layers.foreach((layer: mutable.Buffer[Operation]) =>{
+      layer.foreach((o: Operation) => print(o," "))
+      println("")
+    })
+    */
+    matrix.printArray()
+    matrix.gaussianEliminationParallel()
+    matrix.printArray()
   }
 }
