@@ -1,7 +1,8 @@
 package tw.projekt
 
-import scala.collection.mutable
+import breeze.linalg.DenseMatrix
 
+import scala.collection.mutable
 private object Main{
   def main(args: Array[String]): Unit = {
     val filepath: String = "src\\main\\scala\\in.txt"
@@ -17,16 +18,13 @@ private object Main{
         println("")
       })
       */
-    val foataForm = FoataForm(relations)
-    //println("\n\n\n")
-    /*
-    foataForm.layers.foreach((layer: mutable.Buffer[Operation]) =>{
-      layer.foreach((o: Operation) => print(o," "))
-      println("")
-    })
-    */
     matrix.printArray()
     matrix.gaussianEliminationParallel()
+    matrix.printArray()
+    val size = matrix.array.length
+    val indices = IndexedSeq(0,size)
+    val sliced: Array[Array[Double]] = matrix.array.map((row: Array[Double]) => row.slice(0,size))//
+    matrix.backSubstitution()
     matrix.printArray()
   }
 }

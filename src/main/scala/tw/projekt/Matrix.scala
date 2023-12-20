@@ -9,13 +9,13 @@ import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
 
 class Matrix(val array: Array[Array[Double]]){
-  private val size = this.array.length
+  val size: Int = this.array.length
   private val foataForm = FoataForm(Relations(this))
   private val multipliers: mutable.Buffer[Double] = Array.ofDim[Double](size).toBuffer
   private var done = new CountDownLatch(0)
   def printArray(): Unit ={
     array.foreach((arr: Array[Double]) => {
-      arr.foreach((d: Double) => print(d, " "))
+      arr.foreach((d: Double) => print("%.2f\t".format(d)))
       println("")
     })
     println("\n\n\n")
@@ -40,6 +40,25 @@ class Matrix(val array: Array[Array[Double]]){
       done.await()
     })
   }
+  def backSubstitution(): Unit ={
+    for (i <- size-1 to (0,-1)){
+      val x = array(i)(i)
+      for (j <- i - 1 to(0, -1)) {
+        val divider = array(j)(i) / x
+        for (k <- j to size) {
+          array(j)(k) -= (divider * array(i)(k))
+        }
+      }
+      array(i)(i) /= x
+      array(i)(size) /= x
+    }
+  }
+  def solve(): Unit={
+    gaussianEliminationParallel()
+    backSubstitution()
+  }
+  def lhs: Array[Array[Double]] = array.map((row: Array[Double]) => row.slice(0,size))
+  def rhs: Array[Double] = array.map((row: Array[Double]) => row(size))
   def perform(operation:Operation): Unit ={
     //println("operation performed")
     val (i,j,k) = (operation.row1,operation.column, operation.row2)
@@ -101,4 +120,6 @@ object Matrix{
     }
     new Matrix(arr)
   }
+
+  def compare(a: Double, b: Double, epsilon: Double): Boolean = Math.abs(a - b) < epsilon
 }
